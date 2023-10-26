@@ -8,6 +8,8 @@ router.post('/create', authMiddleware.verifyToken, sessionController.createSessi
 
 router.get('/availableSessions', sessionController.getAvailableSessions);
 
-router.post('/joinSession/:sessionId', sessionController.joinSession);
+router.post('/joinSession/:sessionId',  authMiddleware.verifyToken,sessionController.joinSession);
+
+router.put('/updateSession/:sessionId', sessionController.updateSession);
 
 module.exports = router;

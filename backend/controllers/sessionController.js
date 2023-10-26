@@ -79,7 +79,11 @@ const joinSession = async (req, res) => {
       if (!session) {
         return res.status(404).json({ message: 'Session not found' });
       }
-  
+      
+      if (session.status !== 'scheduled') {
+        return res.status(400).json({ message: 'Cannot join a completed or canceled session' });
+      }
+
       // Find the student
       const student = await Student.findById(studentId);
   
@@ -118,9 +122,45 @@ const joinSession = async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+  
 
+  const updateSession = async (req, res) => {
+    try {
+      const { sessionId } = req.params;
+      const { teacherId, startTime, endTime, status, paymentStatus, subject, sessionPrice } = req.body;
+  
+      // Find the session
+      const session = await Session.findById(sessionId);
+  
+      if (!session) {
+        return res.status(404).json({ message: 'Session not found' });
+      }
+  
+      // Check if the teacher is the creator of the session
+      if (session.teacher.toString() !== teacherId) {
+        return res.status(403).json({ message: 'You are not authorized to update this session' });
+      }
+  
+      // Update session details
+      session.startTime = startTime || session.startTime;
+      session.endTime = endTime || session.endTime;
+      session.status = status || session.status;
+      session.paymentStatus = paymentStatus || session.paymentStatus;
+      session.subject = subject || session.subject;
+      session.sessionPrice = sessionPrice || session.sessionPrice;
+  
+      await session.save();
+  
+      res.status(200).json({ message: 'Session updated successfully', session });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+  
 module.exports = {
     createSession,
     getAvailableSessions,
     joinSession,
+    updateSession,
 };
