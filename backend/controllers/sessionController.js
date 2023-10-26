@@ -157,10 +157,31 @@ const joinSession = async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+
+  const getSpecificSession = async (req, res) => {
+    try {
+        const { sessionId } = req.params;
+
+        // Find the session
+        const session = await Session.findById(sessionId);
+
+        if (!session) {
+            return res.status(404).json({ message: 'Session not found' });
+        }
+
+        res.status(200).json({ session });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+
   
 module.exports = {
     createSession,
     getAvailableSessions,
     joinSession,
     updateSession,
+    getSpecificSession,
 };

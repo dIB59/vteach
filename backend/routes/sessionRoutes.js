@@ -12,4 +12,7 @@ router.post('/joinSession/:sessionId',  authMiddleware.verifyToken,sessionContro
 
 router.put('/updateSession/:sessionId', sessionController.updateSession);
 
+router.get('/session/:sessionId', sessionController.getSpecificSession);
+
+
 module.exports = router;

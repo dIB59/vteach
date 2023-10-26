@@ -87,10 +87,104 @@ const getMyStudents = async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+
+  const updateProfile = async (req, res) => {
+    try {
+      const { teacherId } = req.params;
+      const { educationalCredentials, subjectsTaught, availableTimeSlots, firstName, lastName, profilePicture, contactInformation } = req.body;
   
+      // Find the teacher
+      const teacher = await Teacher.findById(teacherId);
   
+      if (!teacher) {
+        return res.status(404).json({ message: 'Teacher not found' });
+      }
+  
+      // Update teacher profile
+      teacher.educationalCredentials = educationalCredentials || teacher.educationalCredentials;
+      teacher.subjectsTaught = subjectsTaught || teacher.subjectsTaught;
+      teacher.availableTimeSlots = availableTimeSlots || teacher.availableTimeSlots;
+  
+      // Update user information
+      const user = await User.findById(teacher.user);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      user.firstName = firstName || user.firstName;
+      user.lastName = lastName || user.lastName;
+      user.profilePicture = profilePicture || user.profilePicture;
+      user.contactInformation = contactInformation || user.contactInformation;
+  
+      await teacher.save();
+      await user.save();
+  
+      res.status(200).json({ message: 'Teacher profile and user information updated successfully', teacher, user });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+  
+
+  const getSpecificSessionAndStudents = async (req, res) => {
+    try {
+        const { teacherId, sessionId } = req.params;
+
+        // Find the teacher
+        const teacher = await Teacher.findById(teacherId);
+
+        if (!teacher) {
+            return res.status(404).json({ message: 'Teacher not found' });
+        }
+
+        // Find the session
+        const session = await Session.findById(sessionId);
+
+        if (!session) {
+            return res.status(404).json({ message: 'Session not found' });
+        }
+
+        // Check if the session belongs to the teacher
+        if (session.teacher.toString() !== teacherId) {
+            return res.status(403).json({ message: 'You are not authorized to view this session' });
+        }
+
+        const sessionData = {
+            subject: session.subject,
+            startTime: session.startTime,
+            endTime: session.endTime,
+            students: [],
+        };
+
+        // Loop through students of the session
+        for (const studentId of session.students) {
+            const student = await Student.findById(studentId).populate('user', ['firstName', 'lastName', 'email', 'profilePicture', 'contactInformation']);
+
+            if (student) {
+                sessionData.students.push({
+                    firstName: student.user.firstName,
+                    lastName: student.user.lastName,
+                    email: student.user.email,
+                    profilePicture: student.user.profilePicture,
+                    contactInformation: student.user.contactInformation,
+                });
+            }
+        }
+
+        res.status(200).json({ sessionData });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+};
+
+
 module.exports = {
     getTeacherName,
     getTeacherProfile,
     getMyStudents,
+    updateProfile,
+    getSpecificSessionAndStudents,
 };
