@@ -5,4 +5,5 @@ const router = express.Router();
 
 router.get('/:teacherId/name', teacherController.getTeacherName);
 router.get('/:teacherId', teacherController.getTeacherProfile);
+router.get('/myStudents/:teacherId', teacherController.getMyStudents);
 module.exports = router;
