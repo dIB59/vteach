@@ -7,6 +7,7 @@ const userRoutes = require('./routes/userRoutes');
 const sessionRoutes = require('./routes/sessionRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const messageRoute= require('./routes/messageRoutes');
+const reviewRoute= require('./routes/reviewRoutes');
 
 
 dotenv.config();
@@ -33,3 +34,4 @@ app.use('/users', userRoutes);
 app.use('/sessions', sessionRoutes);
 app.use('/teachers', teacherRoutes);
 app.use('/messages', messageRoute);
+app.use('/reviews',reviewRoute);
