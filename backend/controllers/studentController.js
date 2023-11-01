@@ -4,15 +4,29 @@ const User = require('../models/user');
 const Student = require('../models/student');
 
 
-
-
-
 const getSpecificStudent = async (req, res) => {
     try {
         const { studentId } = req.params;
 
-        // Find the student
-        const student = await Student.findById(studentId);
+        // Find the student and populate 'sessions' and 'teachers' fields with relevant details
+        const student = await Student.findById(studentId)
+            .populate({
+                path: 'sessions',
+                select: ['startTime', 'endTime', 'status', 'paymentStatus', 'teacherName','subject', 'sessionPrice']
+            })
+            .populate({
+                path: 'teachers',
+                select: ['educationalCredentials', 'subjectsTaught', 'availableTimeSlots'],
+                populate: {
+                    path: 'user',
+                    select: ['firstName', 'lastName', 'email', 'contactInformation', 'profilePicture']
+                }
+            })
+            .populate({
+                path: 'user',
+                select: ['firstName', 'lastName', 'email', 'contactInformation', 'profilePicture']
+            })
+            
 
         if (!student) {
             return res.status(404).json({ message: 'Student not found' });
@@ -24,6 +38,9 @@ const getSpecificStudent = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+
+
 
 const getAllStudents = async (req, res) => {
     try {
