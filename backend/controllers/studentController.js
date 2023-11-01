@@ -94,7 +94,7 @@ const getMyTeachers = async (req, res) => {
 const updateProfile = async (req, res) => {
     try {
         const { studentId } = req.params;
-        const { educationalLevel, subjectsOfInterest, firstName, lastName, profilePicture, contactInformation } = req.body;
+        const { educationalLevel, subjectsOfInterest, firstName, lastName, profilePicture, contactInformation, email } = req.body;
 
         // Find the student
         const student = await Student.findById(studentId);
@@ -118,7 +118,7 @@ const updateProfile = async (req, res) => {
         user.lastName = lastName || user.lastName;
         user.profilePicture = profilePicture || user.profilePicture;
         user.contactInformation = contactInformation || user.contactInformation;
-
+        user.email= email || user.email;
         await student.save();
         await user.save();
 
