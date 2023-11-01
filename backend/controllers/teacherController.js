@@ -22,21 +22,56 @@ const getTeacherName = async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+
 const getTeacherProfile = async (req, res) => {
     try {
-        const teacherId = req.params.teacherId;
-        const teacher = await Teacher.find({ user: teacherId }).populate('user');
+        const { teacherId } = req.params;
+
+        // Find the teacher by ID and populate the 'user' and 'sessions' fields
+        const teacher = await Teacher.findById(teacherId).populate('user').populate('sessions');
 
         if (!teacher) {
             return res.status(404).json({ message: 'Teacher not found' });
         }
 
-        res.json(teacher);
+        // Organize the teacher data
+        const teacherData = {
+            // User information
+            user: {
+                firstName: teacher.user.firstName,
+                lastName: teacher.user.lastName,
+                email: teacher.user.email,
+                contactInformation: teacher.user.contactInformation,
+                profilePicture: teacher.user.profilePicture,
+            },
+            // Teacher-specific details
+            educationalCredentials: teacher.educationalCredentials,
+            subjectsTaught: teacher.subjectsTaught,
+            availableTimeSlots: teacher.availableTimeSlots,
+            // Sessions details
+            sessions: teacher.sessions.map(session => ({
+                startTime: session.startTime,
+                endTime: session.endTime,
+                status: session.status,
+                paymentStatus: session.paymentStatus,
+                subject: session.subject,
+                sessionPrice: session.sessionPrice
+            }))
+        };
+
+        // Respond with the organized teacher data
+        res.status(200).json({ teacher: teacherData });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
+
+
+
+
 
 const getMyStudents = async (req, res) => {
     try {
