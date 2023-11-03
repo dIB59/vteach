@@ -37,7 +37,31 @@ const getMessages = async (req, res) => {
   }
 };
 
+const checkForNewMessages = async (req, res) => {
+  try {
+    const { senderId, receiverId, lastTimestamp } = req.query;
+
+    // Convert lastTimestamp to a Date object
+    const lastDate = new Date(lastTimestamp);
+
+    const messages = await Message.find({
+      $or: [
+        { sender: senderId, receiver: receiverId },
+        { sender: receiverId, receiver: senderId },
+      ],
+      timestamp: { $gt: lastDate } // Find messages with a timestamp greater than lastDate
+    }).sort({ timestamp: 1 });
+
+    res.status(200).json({ messages });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+
 module.exports = {
   sendMessage,
   getMessages,
+  checkForNewMessages
 };
