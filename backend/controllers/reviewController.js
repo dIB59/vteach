@@ -1,33 +1,43 @@
 const Review = require('../models/review');
 const Teacher = require('../models/teacher');
+const Student = require('../models/student');
 
 const addReview = async (req, res) => {
   try {
-    const { studentId, teacherId, rating, comment } = req.body;
+      const { studentId, teacherId, rating, comment } = req.body;
 
-    // Check if the teacher exists
-    const teacher = await Teacher.findById(teacherId);
-    console.log(teacher)
-    if (!teacher) {
-      return res.status(404).json({ message: 'Teacher not found' });
-    }
+      // Check if the teacher exists
+      const teacher = await Teacher.findById(teacherId);
+      if (!teacher) {
+          return res.status(404).json({ message: 'Teacher not found' });
+      }
 
-    // Create a new review
-    const review = new Review({
-      student: studentId,
-      teacher: teacherId,
-      rating: rating,
-      comment: comment,
-    });
+      // Check if the student exists
+      const student = await Student.findById(studentId).populate('user');
+      if (!student) {
+          return res.status(404).json({ message: 'Student not found' });
+      }
 
-    await review.save();
+      const studentName = `${student.user.firstName} ${student.user.lastName}`;
 
-    res.status(200).json({ message: 'Review added successfully', review });
+      // Create a new review with studentName
+      const review = new Review({
+          student: studentId,
+          teacher: teacherId,
+          studentName: studentName,
+          rating: rating,
+          comment: comment,
+      });
+
+      await review.save();
+
+      res.status(200).json({ message: 'Review added successfully', review });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 const getTeacherReviews = async (req, res) => {
     try {
@@ -42,7 +52,26 @@ const getTeacherReviews = async (req, res) => {
     }
   };
   
+  const updateReview = async (req, res) => {
+    try {
+      const { reviewId } = req.params;
+      const { rating, comment } = req.body;
+  
+      const review = await Review.findByIdAndUpdate(reviewId, { rating, comment }, { new: true });
+  
+      if (!review) {
+        return res.status(404).json({ message: 'Review not found' });
+      }
+  
+      res.status(200).json({ message: 'Review updated successfully', review });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+  
   module.exports = {
     addReview,
     getTeacherReviews,
+    updateReview, 
   };

@@ -11,6 +11,10 @@ const reviewSchema = new mongoose.Schema({
     ref: 'Teacher',
     required: true,
   },
+  studentName: {
+    type: String,
+    required: true
+  },
   rating: {
     type: Number,
     required: true,
