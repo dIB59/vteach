@@ -70,8 +70,26 @@ const getTeacherReviews = async (req, res) => {
     }
   };
   
+  const deleteReview = async (req, res) => {
+    try {
+      const { reviewId } = req.params;
+  
+      const review = await Review.findByIdAndDelete(reviewId);
+  
+      if (!review) {
+        return res.status(404).json({ message: 'Review not found' });
+      }
+  
+      res.status(200).json({ message: 'Review deleted successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+  
   module.exports = {
     addReview,
     getTeacherReviews,
-    updateReview, 
+    updateReview,
+    deleteReview, 
   };
