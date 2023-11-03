@@ -16,28 +16,41 @@ const generateToken = (userId) => {
 const signup = async (req, res) => {
     try {
         const { firstName, lastName, email, password, role } = req.body;
-        
+
+        // Check email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: 'Invalid email format' });
+        }
+
+        // Check password format (at least 8 characters, containing letters and numbers)
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(password)) {
+            return res.status(400).json({ message: 'Invalid password format' });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({ firstName, lastName, email, password: hashedPassword, role });
-        
+
         let profile;
 
         if (role === 'teacher') {
             const { educationalCredentials } = req.body;
-            profile = await Teacher.create({ user: user._id ,educationalCredentials});
+            profile = await Teacher.create({ user: user._id, educationalCredentials });
         } else if (role === 'student') {
-            const { educationalLevel ,subjectsOfInterest } = req.body;
-            profile = await Student.create({ user: user._id ,educationalLevel ,subjectsOfInterest});
+            const { educationalLevel, subjectsOfInterest } = req.body;
+            profile = await Student.create({ user: user._id, educationalLevel, subjectsOfInterest });
         }
 
         const tokens = generateToken(user._id);
-        
+
         res.json(tokens);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
+
 
 // Login
 const login = async (req, res) => {
