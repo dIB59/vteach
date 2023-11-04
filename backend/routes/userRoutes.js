@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.get('/profile', authMiddleware.verifyToken, userController.getProfile);
 
-router.put('/updateCredentials/:userId', userController.updateCredentials);
+router.put('/updateCredentials/:userId', authMiddleware.verifyToken, userController.updateCredentials);
 
 module.exports = router;

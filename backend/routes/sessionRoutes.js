@@ -6,13 +6,13 @@ const router = express.Router();
 
 router.post('/create', authMiddleware.verifyToken, sessionController.createSession);
 
-router.get('/availableSessions', sessionController.getAvailableSessions);
+router.get('/availableSessions', authMiddleware.verifyToken, sessionController.getAvailableSessions);
 
-router.post('/joinSession/:sessionId',  authMiddleware.verifyToken,sessionController.joinSession);
+router.post('/joinSession/:sessionId', authMiddleware.verifyToken,  authMiddleware.verifyToken,sessionController.joinSession);
 
-router.put('/updateSession/:sessionId', sessionController.updateSession);
+router.put('/updateSession/:sessionId', authMiddleware.verifyToken, sessionController.updateSession);
 
-router.get('/session/:sessionId', sessionController.getSpecificSession);
+router.get('/session/:sessionId', authMiddleware.verifyToken, sessionController.getSpecificSession);
 
 
 module.exports = router;
