@@ -1,30 +1,37 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { TextField, Button, Container, Typography, Paper, Grid } from '@mui/material';
-
+import axios from 'axios';
+import { useAuth } from './AuthContext';
 
 const LoginPage = () => {
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    // Simple email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError('Invalid email format');
-      return;
+  const handleLogin = async () => {
+    try {
+      // Send a login request to the server
+      const response = await axios.post('http://localhost:3001/auth/login', { email, password });
+      
+      console.log(response.data)
+      // Assuming the server sends a JWT token upon successful login
+      const { accessToken, refreshToken } = response.data;
+
+
+      // Call the login function with the user data
+      console.log(accessToken);
+      login(accessToken, refreshToken);
+      
+
+      // Redirect logic remains the same
+    } catch (error) {
+      console.error('Login failed:', error);
     }
-  
-    // Simple password validation
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      setError('Invalid password format');
-      return;
-    }
-    navigate('/profile');
   };
+
 
   return (
     <Container component="main" maxWidth="xs" sx={{ height: '100vh', display: 'flex', alignItems: 'center' }}>

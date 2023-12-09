@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState } from 'react';
-
 import axios from 'axios';
 
 const AuthContext = createContext();
@@ -7,22 +6,13 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const login = async (userData) => {
-    try {
-      // Send a login request to the server
-      const response = await axios.post('YOUR_BACKEND_LOGIN_ENDPOINT', userData);
-      
-      //  server sends a JWT token upon successful login
-      const { token, user } = response.data;
+  const login = (token, userData) => {
+    // Save the token to local storage
+    localStorage.setItem('token', token);
+    console.log(token)
 
-      // Save the token to local storage
-      localStorage.setItem('token', token);
-
-      // Set the user in the context state
-      setUser(user);
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
+    // Set the user in the context state
+    setUser(userData);
   };
 
   const logout = () => {

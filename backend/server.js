@@ -13,7 +13,15 @@ const studentRoute= require('./routes/studentRoutes');
 dotenv.config();
 const app = express();
 
+
 app.use(cors());
+app.options('*', function (req, res) {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader('Access-Control-Allow-Methods', '*');
+    res.setHeader("Access-Control-Allow-Headers", "*");
+    res.end();
+  });
+  
 app.use(express.json());
 
 // Connect to MongoDB
