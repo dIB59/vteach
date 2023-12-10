@@ -1,19 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {
-  TextField,
-  Button,
-  Container,
-  Typography,
-  Paper,
-  Grid,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-} from '@mui/material';
-
-// ... (previous imports)
+import { TextField, Button, Container, Typography, Paper, Grid, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import axios from 'axios';
 
 const SignupPage = () => {
   const navigate = useNavigate();
@@ -23,44 +11,38 @@ const SignupPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
-  const [educationalLevel, setEducationalLevel] = useState(''); // New state for educational level
-  const [subjectsOfInterest, setSubjectsOfInterest] = useState(''); // New state for subjects of interest
+  const [educationalLevel, setEducationalLevel] = useState('');
+  const [subjectsOfInterest, setSubjectsOfInterest] = useState('');
+  const [educationalCredentials, setEducationalCredentials] = useState(''); // Add missing state for teacher
+
   const [error, setError] = useState('');
 
-  const handleSignup = () => {
-    // First Name, Last Name, and Email validation
-    if (!firstName.trim() || !lastName.trim()) {
-      setError('First Name and Last Name are required');
-      return;
-    }
+  const handleSignup = async () => {
+    try {
+      const userData = {
+        firstName,
+        lastName,
+        email,
+        password,
+        role,
+        educationalLevel,
+        subjectsOfInterest,
+        educationalCredentials, // Include educationalCredentials for teacher
+      };
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setError('Invalid email format');
-      return;
-    }
+      
+      const response = await axios.post('http://localhost:3001/auth/signup', userData);
 
-    // Password validation
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(password)) {
-      setError('Invalid password format');
-      return;
-    }
+      // Handle the successful response (you may want to do something with the response data)
+      console.log('Signup successful:', response.data);
 
-    // Role-specific validation
-    if (role === 'teacher' && !educationalLevel.trim()) {
-      setError('Educational Credentials are required for teachers');
-      return;
+      // Navigate to the desired page after successful signup
+      navigate('/');
+    } catch (error) {
+      // Handle errors, you may want to update the state to display an error message
+      console.error('Signup error:', error.response?.data || error.message);
+      setError('Signup failed. Please check your inputs and try again.');
     }
-
-    if (role === 'student' && (!educationalLevel.trim() || !subjectsOfInterest.trim())) {
-      setError('Educational Level and Subjects of Interest are required for students');
-      return;
-    }
-
-    // All validations passed, proceed with signup
-    navigate('/');
   };
 
   return (
@@ -133,9 +115,9 @@ const SignupPage = () => {
               required
               fullWidth
               label="Educational Credentials"
-              id="educationalLevel"
-              value={educationalLevel}
-              onChange={(e) => setEducationalLevel(e.target.value)}
+              id="educationalCredentials"
+              value={educationalCredentials}
+              onChange={(e) => setEducationalCredentials(e.target.value)}
             />
           ) : role === 'student' ? (
             <>

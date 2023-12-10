@@ -42,7 +42,7 @@ const signup = async (req, res) => {
         }
 
         const tokens = generateToken(user._id);
-
+    
         res.json(tokens);
     } catch (error) {
         console.error(error);

@@ -6,13 +6,13 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const login = (token, userData) => {
+  const login = (accessToken, refreshToken) => {
     // Save the token to local storage
-    localStorage.setItem('token', token);
+    localStorage.setItem('token', refreshToken);
     console.log(token)
 
     // Set the user in the context state
-    setUser(userData);
+    setUser(accessToken);
   };
 
   const logout = () => {
