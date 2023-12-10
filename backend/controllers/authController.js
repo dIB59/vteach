@@ -12,7 +12,6 @@ const generateToken = (userId) => {
     return { accessToken, refreshToken };
 };
 
-// Signup
 const signup = async (req, res) => {
     try {
         const { firstName, lastName, email, password, role } = req.body;
@@ -47,6 +46,12 @@ const signup = async (req, res) => {
         res.json(tokens);
     } catch (error) {
         console.error(error);
+
+        // Check for duplicate email error (code 11000)
+        if (error.code === 11000 && error.keyPattern && error.keyPattern.email) {
+            return res.status(409).json({ message: 'Email already in use' });
+        }
+
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
