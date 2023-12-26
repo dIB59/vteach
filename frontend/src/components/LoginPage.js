@@ -23,12 +23,21 @@ const LoginPage = () => {
 
       // Call the login function with the user data
       console.log(accessToken);
-      
+      setAuth({ accessToken, refreshToken });
       
 
       // Redirect logic remains the same
     } catch (error) {
       console.error('Login failed:', error);
+      if (!error?.response) {
+        setError('No Server Response');
+      } else if (error.response?.status === 400) {
+        setError('Missing Username or Password');
+      } else if (error.response?.status === 401) {
+        setError('Invalid credentials');
+      } else {
+        setError('Login Failed');
+      }
     }
   };
 
