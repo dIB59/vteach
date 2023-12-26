@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { TextField, Button, Container, Typography, Paper, Grid } from '@mui/material';
 import axios from 'axios';
-import { useAuth } from './AuthContext';
+import AuthContext from './AuthContext';
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { setAuth } = useContext(AuthContext);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,7 +23,7 @@ const LoginPage = () => {
 
       // Call the login function with the user data
       console.log(accessToken);
-      login(accessToken, refreshToken);
+      
       
 
       // Redirect logic remains the same
