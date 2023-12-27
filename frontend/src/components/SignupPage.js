@@ -27,7 +27,7 @@ const SignupPage = () => {
         role,
         educationalLevel,
         subjectsOfInterest,
-        educationalCredentials, // Include educationalCredentials for teacher
+        educationalCredentials, 
       };
 
       

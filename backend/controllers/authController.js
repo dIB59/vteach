@@ -73,8 +73,13 @@ const login = async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        const tokens = generateToken(user._id);
-        res.json(tokens);
+        const { accessToken, refreshToken } = generateToken(user._id);
+        const response = {
+            accessToken,
+            refreshToken,
+            role: user.role,
+        };
+        res.json(response);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });

@@ -18,12 +18,12 @@ const LoginPage = () => {
       
       console.log(response.data)
       // Assuming the server sends a JWT token upon successful login
-      const { accessToken, refreshToken } = response.data;
+      const { accessToken, refreshToken,role } = response.data;
 
 
       // Call the login function with the user data
-      console.log(accessToken);
-      setAuth({ accessToken, refreshToken });
+      console.log(accessToken,role);
+      setAuth({ accessToken, refreshToken ,role});
       
 
       // Redirect logic remains the same
