@@ -37,7 +37,7 @@ const SignupPage = () => {
       console.log('Signup successful:', response.data);
 
       // Navigate to the desired page after successful signup
-      navigate('/');
+      navigate('/login');
     } catch (error) {
       // Handle errors, you may want to update the state to display an error message
       console.error('Signup error:', error.response?.data || error.message);

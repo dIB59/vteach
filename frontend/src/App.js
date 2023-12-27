@@ -3,17 +3,24 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from './components/LoginPage';
 import SignupPage from './components/SignupPage';
 import StudentHomePage from './components/StudentHomePage';
+import Unauthorized from './components/Unauthorized';
+import RequireAuth from './components/RequireAuth';
 
 
 const App = () => {
   return (
-    <Router>
+    
       <Routes>
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/studenthomepage" element={<StudentHomePage />} />
+
+        <Route element={<RequireAuth allowedRoles={['student']}/>}>
+          <Route path="/studenthomepage" element={<StudentHomePage />} />
+        </Route>
+
+        <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
-    </Router>
+    
   );
 };
 

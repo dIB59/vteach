@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { TextField, Button, Container, Typography, Paper, Grid } from '@mui/material';
 import axios from 'axios';
-import AuthContext from './AuthContext';
+import useAuth from '../hooks/useAuth';
 
 const LoginPage = () => {
-  const { setAuth } = useContext(AuthContext);
+  const { setAuth } = useAuth()
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,20 +13,20 @@ const LoginPage = () => {
 
   const handleLogin = async () => {
     try {
-      // Send a login request to the server
+      
       const response = await axios.post('http://localhost:3001/auth/login', { email, password });
       
       console.log(response.data)
-      // Assuming the server sends a JWT token upon successful login
+      
       const { accessToken, refreshToken,role } = response.data;
 
 
       // Call the login function with the user data
       console.log(accessToken,role);
       setAuth({ accessToken, refreshToken ,role});
-      
+      navigate('/studenthomepage');
 
-      // Redirect logic remains the same
+     
     } catch (error) {
       console.error('Login failed:', error);
       if (!error?.response) {
