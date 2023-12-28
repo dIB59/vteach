@@ -10,18 +10,20 @@ const messageRoute= require('./routes/messageRoutes');
 const reviewRoute= require('./routes/reviewRoutes');
 const studentRoute= require('./routes/studentRoutes');
 
+const cookieParser = require('cookie-parser');
+
 dotenv.config();
 const app = express();
 
 
-app.use(cors());
-app.options('*', function (req, res) {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader('Access-Control-Allow-Methods', '*');
-    res.setHeader("Access-Control-Allow-Headers", "*");
-    res.end();
-  });
-  
+const corsOptions = {
+    origin: 'http://localhost:3000', 
+    credentials: true,
+ 
+};
+
+app.use(cors(corsOptions));
+app.use(cookieParser());
 app.use(express.json());
 
 // Connect to MongoDB

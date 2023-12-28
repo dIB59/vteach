@@ -4,9 +4,15 @@ const User = require('../models/user');
 const Teacher = require('../models/teacher');
 const Student = require('../models/student');
 
+
+
+
+
+
+
 // Generate JWT Token
 const generateToken = (userId) => {
-    const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+    const accessToken = jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
     const refreshToken = jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
 
     return { accessToken, refreshToken };
@@ -74,20 +80,34 @@ const login = async (req, res) => {
         }
 
         const { accessToken, refreshToken } = generateToken(user._id);
+        res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true ,sameSite : 'lax'});
         const response = {
             accessToken,
             refreshToken,
             role: user.role,
         };
+
+        if (user.role === 'teacher') {
+            const teacher = await Teacher.findOne({ user: user._id });
+            if (teacher) {
+                response.teacherId = teacher._id;
+            }
+        } else if (user.role === 'student') {
+            const student = await Student.findOne({ user: user._id });
+            if (student) {
+                response.studentId = student._id;
+            }
+        }
+
         res.json(response);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
 };
-//refresh token when access token expire
+
 const refreshTokens = (req, res) => {
-    const refreshToken = req.body.refreshToken;
+    const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
         return res.status(401).json({ message: 'Refresh token not provided' });
@@ -98,7 +118,7 @@ const refreshTokens = (req, res) => {
             return res.status(403).json({ message: 'Invalid refresh token' });
         }
 
-        const accessToken = jwt.sign({ userId: user.userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+        const accessToken = jwt.sign({ userId: user.userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30s' });
 
         res.json({ accessToken });
     });

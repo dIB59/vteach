@@ -14,17 +14,21 @@ const LoginPage = () => {
   const handleLogin = async () => {
     try {
       
-      const response = await axios.post('http://localhost:3001/auth/login', { email, password });
+      const response = await axios.post(
+        'http://localhost:3001/auth/login',
+        { email, password },
+        { withCredentials: true } // Add this line
+    );
       
       console.log(response.data)
       
-      const { accessToken, refreshToken,role } = response.data;
+      const { accessToken, refreshToken,role,teacherId } = response.data;
 
 
       // Call the login function with the user data
-      console.log(accessToken,role);
-      setAuth({ accessToken, refreshToken ,role});
-      navigate('/studenthomepage');
+      console.log(accessToken,role,teacherId);
+      setAuth({ accessToken, refreshToken ,role,teacherId});
+      navigate('/teacherhomepage');
 
      
     } catch (error) {

@@ -148,7 +148,7 @@ const SignupPage = () => {
         </form>
         <Grid container justifyContent="flex-end" sx={{ mt: 2 }}>
           <Grid item>
-            <Link to="/" variant="body2">
+            <Link to="/login" variant="body2">
               Already have an account? Sign in
             </Link>
           </Grid>
