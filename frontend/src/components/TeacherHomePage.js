@@ -7,24 +7,11 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import useAuth from '../hooks/useAuth';
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import useRefreshToken from '../hooks/useRefreshToken';
+import Sidebar from './Sidebar';
 
-const drawerWidth = 240;
 
 const RootContainer = styled('div')({
     display: 'flex',
-});
-
-const DrawerContainer = styled(Drawer)({
-    width: drawerWidth,
-    flexShrink: 0,
-});
-
-const DrawerPaper = styled('div')({
-    width: drawerWidth,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    paddingTop: '20px', // Adjust as needed
 });
 
 const ContentContainer = styled('main')({
@@ -76,36 +63,7 @@ const TeacherHomePage = () => {
     return (
         <RootContainer>
             {/* Sidebar */}
-            <DrawerContainer variant="permanent" anchor="left">
-                <DrawerPaper>
-                    <Avatar sx={{ width: 80, height: 80, marginBottom: '10px' }}>
-                        <AccountCircleIcon sx={{ width: 80, height: 80 }} />
-                    </Avatar>
-                    <Typography variant="h6" gutterBottom>
-                        {teacherData && `${teacherData.user.firstName} ${teacherData.user.lastName}`}
-                    </Typography>
-                    <List>
-                        <ListItem button>
-                            <ListItemIcon>
-                                <MailOutlineIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Homepage" />
-                        </ListItem>
-                        <ListItem button>
-                            <ListItemIcon>
-                                <MailOutlineIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Sessions" />
-                        </ListItem>
-                        <ListItem button>
-                            <ListItemIcon>
-                                <MailOutlineIcon />
-                            </ListItemIcon>
-                            <ListItemText primary="Messaging" />
-                        </ListItem>
-                    </List>
-                </DrawerPaper>
-            </DrawerContainer>
+            <Sidebar teacherData={teacherData}/>
 
             {/* Main Content Area */}
             <ContentContainer>
